@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.view.list;
+package me.kholmukhamedov.soramitsutest.presentation.view.grid;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +18,7 @@ import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import static android.view.View.OnClickListener;
 import static dagger.internal.Preconditions.checkNotNull;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
+public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     private final Picasso mPicasso;
     private final List<ItemModel> mItems;
@@ -30,7 +30,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder> {
      * @param picasso         Picasso
      * @param onClickListener on item click event listener
      */
-    ListAdapter(@NonNull Picasso picasso,
+    GridAdapter(@NonNull Picasso picasso,
                 @NonNull OnClickListener onClickListener) {
         mPicasso = checkNotNull(picasso, "Picasso is required");
         mOnClickListener = checkNotNull(onClickListener, "RecyclerView.OnClickListener is required");

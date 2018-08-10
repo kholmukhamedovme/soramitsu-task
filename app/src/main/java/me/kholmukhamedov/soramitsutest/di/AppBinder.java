@@ -3,15 +3,15 @@ package me.kholmukhamedov.soramitsutest.di;
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 import me.kholmukhamedov.soramitsutest.presentation.view.MainActivity;
-import me.kholmukhamedov.soramitsutest.presentation.view.list.ListFragment;
+import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridFragment;
 
 @Module
 public abstract class AppBinder {
 
-    @ContributesAndroidInjector(modules = AppModule.class)
+    @ContributesAndroidInjector
     public abstract MainActivity contributeMainActivityInjector();
 
-    @ContributesAndroidInjector(modules = {AppModule.class, ListModule.class})
-    public abstract ListFragment contributeListFragmentInjector();
+    @ContributesAndroidInjector
+    public abstract GridFragment contributeListFragmentInjector();
 
 }

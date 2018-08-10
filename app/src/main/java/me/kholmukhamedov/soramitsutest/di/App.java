@@ -5,21 +5,9 @@ import dagger.android.support.DaggerApplication;
 
 public final class App extends DaggerApplication {
 
-    private AppComponent mAppComponent;
-
-    @Override
-    public void onCreate() {
-        mAppComponent = DaggerAppComponent
-                .builder()
-                .application(this)
-                .build();
-
-        super.onCreate();
-    }
-
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
-        return mAppComponent;
+        return DaggerAppComponent.builder().create(this);
     }
 
 }

@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import me.kholmukhamedov.soramitsutest.data.remote.ApiService;
 import me.kholmukhamedov.soramitsutest.data.repository.RepositoryImpl;
 import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.domain.Repository;
+import me.kholmukhamedov.soramitsutest.presentation.presenter.GridPresenter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -48,6 +51,12 @@ public final class AppModule {
     @Provides
     Interactor provideInteractor(@NonNull Repository repository) {
         return new Interactor(repository);
+    }
+
+    @Provides
+    @Singleton
+    GridPresenter provideGridPresenter(@NonNull Interactor interactor) {
+        return new GridPresenter(interactor);
     }
 
     @Provides

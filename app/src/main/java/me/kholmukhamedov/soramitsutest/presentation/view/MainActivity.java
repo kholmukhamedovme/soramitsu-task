@@ -5,15 +5,15 @@ import android.os.Bundle;
 import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BaseActivity;
-import me.kholmukhamedov.soramitsutest.presentation.view.list.ListFragment;
+import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridFragment;
 
 /**
  * Main activity of the application
  */
-public class MainActivity extends BaseActivity implements ListFragment.ListFragmentListener {
+public class MainActivity extends BaseActivity implements GridFragment.ListFragmentListener {
 
     /**
-     * Sets the layout and starts fragment
+     * Sets the layout and starts retaining fragment
      *
      * @param savedInstanceState bundle of data that has been saved while changing configuration
      */
@@ -22,10 +22,20 @@ public class MainActivity extends BaseActivity implements ListFragment.ListFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame_layout, ListFragment.newInstance(), ListFragment.TAG)
-                .commit();
+        GridFragment mGridFragment = (GridFragment) getSupportFragmentManager()
+                .findFragmentByTag(GridFragment.TAG);
+
+        if (mGridFragment == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.frame_layout, GridFragment.newInstance(), GridFragment.TAG)
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.frame_layout, mGridFragment, GridFragment.TAG)
+                    .commit();
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.view.list;
+package me.kholmukhamedov.soramitsutest.presentation.view.grid;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -20,15 +20,15 @@ import javax.inject.Inject;
 
 import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.presenter.ListPresenter;
+import me.kholmukhamedov.soramitsutest.presentation.presenter.GridPresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BaseFragment;
 
-public class ListFragment extends BaseFragment implements ListView {
+public class GridFragment extends BaseFragment implements GridView {
 
     /**
      * Tag for fragment manager
      */
-    public static final String TAG = "ListFragment";
+    public static final String TAG = "GridFragment";
 
     private static final int GRID_COLUMNS = 3;
 
@@ -39,7 +39,7 @@ public class ListFragment extends BaseFragment implements ListView {
     Picasso mPicasso;
     @Inject
     @InjectPresenter
-    ListPresenter mPresenter;
+    GridPresenter mPresenter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView.Adapter mAdapter;
@@ -51,18 +51,30 @@ public class ListFragment extends BaseFragment implements ListView {
      *
      * @return new instance of fragment
      */
-    public static ListFragment newInstance() {
-        return new ListFragment();
+    public static GridFragment newInstance() {
+        return new GridFragment();
     }
 
     /**
      * Provide presenter presented by Dagger to Moxy
      *
-     * @return presenter as {@link ListPresenter}
+     * @return presenter as {@link GridPresenter}
      */
     @ProvidePresenter
-    ListPresenter providePresenter() {
+    GridPresenter providePresenter() {
         return mPresenter;
+    }
+
+    /**
+     * Set fragment instance is retaining
+     * This method is only called once for this fragment
+     *
+     * @param savedInstanceState {@inheritDoc}
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     /**
@@ -82,9 +94,9 @@ public class ListFragment extends BaseFragment implements ListView {
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter::loadItems);
 
-        mAdapter = new ListAdapter(mPicasso, v -> {
+        mAdapter = new GridAdapter(mPicasso, v -> {
             int position = mRecyclerView.getChildLayoutPosition(v);
-            ItemModel item = ((ListAdapter) mAdapter).getItem(position);
+            ItemModel item = ((GridAdapter) mAdapter).getItem(position);
             mListener.onItemClick(item);
         });
 
@@ -127,7 +139,7 @@ public class ListFragment extends BaseFragment implements ListView {
     @Override
     public void onItemsLoaded(List<ItemModel> items) {
         mSwipeRefreshLayout.setRefreshing(false);
-        ((ListAdapter) mAdapter).updateItems(items);
+        ((GridAdapter) mAdapter).updateItems(items);
     }
 
     /**

@@ -13,18 +13,18 @@ import me.kholmukhamedov.soramitsutest.models.converter.DomainToPresentationConv
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BasePresenter;
-import me.kholmukhamedov.soramitsutest.presentation.view.list.ListFragment;
-import me.kholmukhamedov.soramitsutest.presentation.view.list.ListView;
+import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridFragment;
+import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridView;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
- * Presenter for {@link ListFragment}
+ * Presenter for {@link GridFragment}
  */
 @InjectViewState
-public class ListPresenter extends BasePresenter<ListView> {
+public class GridPresenter extends BasePresenter<GridView> {
 
-    private static final String TAG = "ListPresenter";
+    private static final String TAG = "GridPresenter";
 
     private Interactor mInteractor;
     private AbstractConverter<Item, ItemModel> mConverter;
@@ -34,7 +34,7 @@ public class ListPresenter extends BasePresenter<ListView> {
      *
      * @param interactor interactor for fetching content from Flickr
      */
-    public ListPresenter(@NonNull Interactor interactor) {
+    public GridPresenter(@NonNull Interactor interactor) {
         mInteractor = checkNotNull(interactor, "Interactor is required");
         mConverter = new DomainToPresentationConverter();
     }
@@ -54,7 +54,7 @@ public class ListPresenter extends BasePresenter<ListView> {
     public void loadItems() {
         getCompositeDisposable().add(
                 mInteractor.requestItems()
-                        .subscribeOn(Schedulers.newThread())
+                        .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .map(mConverter::convertList)
                         .subscribe(
