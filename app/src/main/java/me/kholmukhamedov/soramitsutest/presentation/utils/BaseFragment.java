@@ -12,6 +12,10 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 import dagger.android.support.HasSupportFragmentInjector;
 
+/**
+ * Base fragment
+ * Takes over Dagger-specific code for avoiding boilerplate code
+ */
 public abstract class BaseFragment extends MvpAppCompatFragment
         implements HasSupportFragmentInjector {
 
