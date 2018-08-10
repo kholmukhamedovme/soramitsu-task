@@ -17,4 +17,12 @@ public interface Repository {
      */
     Single<List<Item>> getItems();
 
+    /**
+     * Get list of feed items by tag in domain layer entities
+     *
+     * @param tag tag string
+     * @return Single RxJava source with list of {@link Item} entity
+     */
+    Single<List<Item>> getItems(String tag);
+
 }

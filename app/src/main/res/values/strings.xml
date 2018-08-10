@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Soramitsu Test</string>
+    <string name="search_placeholder">Search by tag</string>
 </resources>

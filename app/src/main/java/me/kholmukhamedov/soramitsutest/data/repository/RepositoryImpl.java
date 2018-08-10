@@ -44,4 +44,17 @@ public final class RepositoryImpl implements Repository {
                 .map(mConverter::convertList);
     }
 
+    /**
+     * Get list of feed items from data layer bean and convert them to domain layer entities
+     *
+     * @param tag tag string
+     * @return Single RxJava source with list of {@link Item} entity
+     */
+    @Override
+    public Single<List<Item>> getItems(String tag) {
+        return mApiService.getFeed(tag)
+                .map(FeedBean::getItems)
+                .map(mConverter::convertList);
+    }
+
 }

@@ -34,4 +34,14 @@ public final class Interactor {
         return mRepository.getItems();
     }
 
+    /**
+     * Request list of feed items by tag in domain layer entities
+     *
+     * @param tag tag string
+     * @return Single RxJava source with list of {@link Item} entity
+     */
+    public Single<List<Item>> requestItems(String tag) {
+        return mRepository.getItems(tag);
+    }
+
 }

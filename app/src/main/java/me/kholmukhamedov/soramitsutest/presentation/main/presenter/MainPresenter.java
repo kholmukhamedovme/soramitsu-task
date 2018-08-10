@@ -64,6 +64,24 @@ public class MainPresenter extends BasePresenter<MainView> {
     }
 
     /**
+     * Request to load feed items by tag
+     *
+     * @param tag search tag
+     */
+    public void loadItems(String tag) {
+        getCompositeDisposable().add(
+                mInteractor.requestItems(tag)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .map(mConverter::convertList)
+                        .subscribe(
+                                items -> getViewState().onItemsLoaded(items),
+                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable)
+                        )
+        );
+    }
+
+    /**
      * Commands to view to show the item
      *
      * @param item item to show

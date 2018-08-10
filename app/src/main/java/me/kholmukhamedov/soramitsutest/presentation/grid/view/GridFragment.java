@@ -7,8 +7,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.squareup.picasso.Picasso;
 
@@ -50,7 +54,7 @@ public class GridFragment extends BaseFragment {
     }
 
     /**
-     * Set fragment instance is retaining
+     * Enables menu and set fragment instance retaining
      * This method is only called once for this fragment
      *
      * @param savedInstanceState {@inheritDoc}
@@ -59,6 +63,43 @@ public class GridFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
+    }
+
+    /**
+     * Inflates menu, adds listeners on search view
+     *
+     * @param menu     {@inheritDoc}
+     * @param inflater {@inheritDoc}
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = new SearchView(this.getContext());
+
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menuItem.setActionView(searchView);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mListener.onSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(() -> {
+            searchView.onActionViewCollapsed();
+            mListener.onPullToRefresh();
+            return true;
+        });
     }
 
     /**
@@ -143,6 +184,13 @@ public class GridFragment extends BaseFragment {
          * @param item item in {@link ItemModel} model
          */
         void onItemClick(ItemModel item);
+
+        /**
+         * Reaction on search event
+         *
+         * @param query query string
+         */
+        void onSearch(String query);
 
     }
 

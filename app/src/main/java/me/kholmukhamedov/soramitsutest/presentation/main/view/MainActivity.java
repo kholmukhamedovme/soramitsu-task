@@ -115,6 +115,14 @@ public class MainActivity extends BaseActivity implements MainView, GridFragment
         mPresenter.loadItem(item);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onSearch(String query) {
+        mPresenter.loadItems(query);
+    }
+
     //endregion
 
     /**
