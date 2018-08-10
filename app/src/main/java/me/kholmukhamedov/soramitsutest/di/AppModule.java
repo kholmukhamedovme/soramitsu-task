@@ -15,7 +15,7 @@ import me.kholmukhamedov.soramitsutest.data.remote.ApiService;
 import me.kholmukhamedov.soramitsutest.data.repository.RepositoryImpl;
 import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.domain.Repository;
-import me.kholmukhamedov.soramitsutest.presentation.presenter.GridPresenter;
+import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -55,11 +55,12 @@ public final class AppModule {
 
     @Provides
     @Singleton
-    GridPresenter provideGridPresenter(@NonNull Interactor interactor) {
-        return new GridPresenter(interactor);
+    MainPresenter provideMainPresenter(@NonNull Interactor interactor) {
+        return new MainPresenter(interactor);
     }
 
     @Provides
+    @Singleton
     Picasso providePicasso(@NonNull Context context) {
         return Picasso.with(context);
     }

@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.view.grid;
+package me.kholmukhamedov.soramitsutest.presentation.grid.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -20,10 +18,9 @@ import javax.inject.Inject;
 
 import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.presenter.GridPresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BaseFragment;
 
-public class GridFragment extends BaseFragment implements GridView {
+public class GridFragment extends BaseFragment {
 
     /**
      * Tag for fragment manager
@@ -37,14 +34,11 @@ public class GridFragment extends BaseFragment implements GridView {
      */
     @Inject
     Picasso mPicasso;
-    @Inject
-    @InjectPresenter
-    GridPresenter mPresenter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView mRecyclerView;
-    private ListFragmentListener mListener;
+    private Listener mListener;
 
     /**
      * Creates new instance
@@ -53,16 +47,6 @@ public class GridFragment extends BaseFragment implements GridView {
      */
     public static GridFragment newInstance() {
         return new GridFragment();
-    }
-
-    /**
-     * Provide presenter presented by Dagger to Moxy
-     *
-     * @return presenter as {@link GridPresenter}
-     */
-    @ProvidePresenter
-    GridPresenter providePresenter() {
-        return mPresenter;
     }
 
     /**
@@ -92,7 +76,7 @@ public class GridFragment extends BaseFragment implements GridView {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(mPresenter::loadItems);
+        mSwipeRefreshLayout.setOnRefreshListener(() -> mListener.onPullToRefresh());
 
         mAdapter = new GridAdapter(mPicasso, v -> {
             int position = mRecyclerView.getChildLayoutPosition(v);
@@ -116,11 +100,11 @@ public class GridFragment extends BaseFragment implements GridView {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof ListFragmentListener) {
-            mListener = (ListFragmentListener) context;
+        if (context instanceof Listener) {
+            mListener = (Listener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement ListFragmentListener");
+                    + " must implement Listener");
         }
     }
 
@@ -134,10 +118,11 @@ public class GridFragment extends BaseFragment implements GridView {
     }
 
     /**
-     * {@inheritDoc}
+     * Set items to adapter
+     *
+     * @param items list of items
      */
-    @Override
-    public void onItemsLoaded(List<ItemModel> items) {
+    public void setItems(List<ItemModel> items) {
         mSwipeRefreshLayout.setRefreshing(false);
         ((GridAdapter) mAdapter).updateItems(items);
     }
@@ -145,10 +130,15 @@ public class GridFragment extends BaseFragment implements GridView {
     /**
      * Interface for activity to implement in order to interact with fragment
      */
-    public interface ListFragmentListener {
+    public interface Listener {
 
         /**
-         * Reaction on item click
+         * Reaction on pull to refresh event
+         */
+        void onPullToRefresh();
+
+        /**
+         * Reaction on item click event
          *
          * @param item item in {@link ItemModel} model
          */

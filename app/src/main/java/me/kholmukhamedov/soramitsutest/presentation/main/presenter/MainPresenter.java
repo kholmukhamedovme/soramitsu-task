@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.presenter;
+package me.kholmukhamedov.soramitsutest.presentation.main.presenter;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -12,19 +12,18 @@ import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
 import me.kholmukhamedov.soramitsutest.models.converter.DomainToPresentationConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
+import me.kholmukhamedov.soramitsutest.presentation.main.view.MainView;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BasePresenter;
-import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridFragment;
-import me.kholmukhamedov.soramitsutest.presentation.view.grid.GridView;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
- * Presenter for {@link GridFragment}
+ * Presenter for {@link me.kholmukhamedov.soramitsutest.presentation.main.view.MainActivity}
  */
 @InjectViewState
-public class GridPresenter extends BasePresenter<GridView> {
+public class MainPresenter extends BasePresenter<MainView> {
 
-    private static final String TAG = "GridPresenter";
+    private static final String TAG = "MainPresenter";
 
     private Interactor mInteractor;
     private AbstractConverter<Item, ItemModel> mConverter;
@@ -34,7 +33,7 @@ public class GridPresenter extends BasePresenter<GridView> {
      *
      * @param interactor interactor for fetching content from Flickr
      */
-    public GridPresenter(@NonNull Interactor interactor) {
+    public MainPresenter(@NonNull Interactor interactor) {
         mInteractor = checkNotNull(interactor, "Interactor is required");
         mConverter = new DomainToPresentationConverter();
     }
@@ -62,6 +61,22 @@ public class GridPresenter extends BasePresenter<GridView> {
                                 throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable)
                         )
         );
+    }
+
+    /**
+     * Commands to view to show the item
+     *
+     * @param item item to show
+     */
+    public void loadItem(ItemModel item) {
+        getViewState().onItemShow(item);
+    }
+
+    /**
+     * Commands to view to hide the item
+     */
+    public void hideItem() {
+        getViewState().onItemHide();
     }
 
 }
