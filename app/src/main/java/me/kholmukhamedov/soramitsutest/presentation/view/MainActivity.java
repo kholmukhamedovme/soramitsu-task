@@ -1,30 +1,42 @@
 package me.kholmukhamedov.soramitsutest.presentation.view;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
-import com.arellomobile.mvp.presenter.InjectPresenter;
-
 import me.kholmukhamedov.soramitsutest.R;
-import me.kholmukhamedov.soramitsutest.presentation.presenter.MainPresenter;
+import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BaseActivity;
+import me.kholmukhamedov.soramitsutest.presentation.view.list.ListFragment;
 
-public class MainActivity extends BaseActivity implements MainView {
+/**
+ * Main activity of the application
+ */
+public class MainActivity extends BaseActivity implements ListFragment.ListFragmentListener {
 
-    public static final String TAG = "MainActivity";
-
-    @InjectPresenter
-    MainPresenter mMainPresenter;
-
-    public static Intent getIntent(final Context context) {
-        return new Intent(context, MainActivity.class);
-    }
-
+    /**
+     * Sets the layout and starts fragment
+     *
+     * @param savedInstanceState bundle of data that has been saved while changing configuration
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.frame_layout, ListFragment.newInstance(), ListFragment.TAG)
+                .commit();
+    }
+
+    @Override
+    public void onItemClick(ItemModel item) {
+        /*
+            TODO
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.frame_layout, ItemFragment.newInstance(), ItemFragment.TAG)
+                    .commit();
+        */
     }
 
 }
