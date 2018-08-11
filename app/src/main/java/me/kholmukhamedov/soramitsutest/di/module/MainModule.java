@@ -1,11 +1,6 @@
 package me.kholmukhamedov.soramitsutest.di.module;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.kotlin.KotlinModule;
-import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
@@ -22,36 +17,10 @@ import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
-import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProviderImpl;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Module
-public class MainModule {
-
-    @MainScope
-    @Provides
-    Retrofit provideRetrofit() {
-        return new Retrofit.Builder()
-                .baseUrl(ApiService.HOST)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(JacksonConverterFactory.create(
-                        new ObjectMapper().registerModule(new KotlinModule())))
-                .build();
-    }
-
-    @MainScope
-    @Provides
-    Picasso providePicasso(@NonNull Context context) {
-        return Picasso.with(context);
-    }
-
-    @MainScope
-    @Provides
-    RxSchedulerProvider provideRxSchedulerProvider() {
-        return new RxSchedulerProviderImpl();
-    }
+public final class MainModule {
 
     //region Converters
     @MainScope
@@ -67,6 +36,7 @@ public class MainModule {
     }
     //endregion
 
+    //region Data layer
     @MainScope
     @Provides
     ApiService provideApiService(@NonNull Retrofit retrofit) {
@@ -79,13 +49,17 @@ public class MainModule {
                                  @NonNull AbstractConverter<FeedBean.Item, Item> converter) {
         return new RepositoryImpl(apiService, converter);
     }
+    //endregion
 
+    //region Domain layer
     @MainScope
     @Provides
     Interactor provideInteractor(@NonNull Repository repository) {
         return new Interactor(repository);
     }
+    //endregion
 
+    //region Presentation layer
     @MainScope
     @Provides
     MainPresenter provideMainPresenter(@NonNull Interactor interactor,
@@ -93,5 +67,6 @@ public class MainModule {
                                        @NonNull RxSchedulerProvider rxSchedulerProvider) {
         return new MainPresenter(interactor, converter, rxSchedulerProvider);
     }
+    //endregion
 
 }
