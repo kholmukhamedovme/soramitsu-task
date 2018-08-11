@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.main.presenter;
+package me.kholmukhamedov.soramitsutest.presentation.presenter;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -9,14 +9,14 @@ import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.main.view.MainView;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BasePresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
+import me.kholmukhamedov.soramitsutest.presentation.view.MainView;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
 /**
- * Presenter for {@link me.kholmukhamedov.soramitsutest.presentation.main.view.MainActivity}
+ * Presenter for {@link me.kholmukhamedov.soramitsutest.presentation.view.MainActivity}
  */
 @InjectViewState
 public final class MainPresenter extends BasePresenter<MainView> {

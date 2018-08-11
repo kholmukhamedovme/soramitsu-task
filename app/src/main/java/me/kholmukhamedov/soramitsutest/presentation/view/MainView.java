@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.main.view;
+package me.kholmukhamedov.soramitsutest.presentation.view;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;

@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.item.view;
+package me.kholmukhamedov.soramitsutest.presentation.view;
 
 import android.content.Context;
 import android.os.Bundle;

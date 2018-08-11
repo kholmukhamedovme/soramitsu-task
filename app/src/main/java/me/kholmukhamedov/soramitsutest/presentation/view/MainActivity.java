@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.main.view;
+package me.kholmukhamedov.soramitsutest.presentation.view;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -21,8 +21,7 @@ import javax.inject.Inject;
 import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.di.App;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.item.view.ItemFragment;
-import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
+import me.kholmukhamedov.soramitsutest.presentation.presenter.MainPresenter;
 
 /**
  * Main activity of the application

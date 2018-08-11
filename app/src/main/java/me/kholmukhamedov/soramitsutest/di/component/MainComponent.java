@@ -3,8 +3,8 @@ package me.kholmukhamedov.soramitsutest.di.component;
 import dagger.Subcomponent;
 import me.kholmukhamedov.soramitsutest.di.module.MainModule;
 import me.kholmukhamedov.soramitsutest.di.scope.MainScope;
-import me.kholmukhamedov.soramitsutest.presentation.item.view.ItemFragment;
-import me.kholmukhamedov.soramitsutest.presentation.main.view.MainActivity;
+import me.kholmukhamedov.soramitsutest.presentation.view.ItemFragment;
+import me.kholmukhamedov.soramitsutest.presentation.view.MainActivity;
 
 @MainScope
 @Subcomponent(modules = MainModule.class)

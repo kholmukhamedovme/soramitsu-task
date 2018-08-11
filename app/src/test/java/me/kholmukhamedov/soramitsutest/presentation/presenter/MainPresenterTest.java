@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.main.presenter;
+package me.kholmukhamedov.soramitsutest.presentation.presenter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +15,8 @@ import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.main.view.MainView$$State;
 import me.kholmukhamedov.soramitsutest.presentation.utils.StubRxSchedulerProviderImpl;
+import me.kholmukhamedov.soramitsutest.presentation.view.MainView$$State;
 
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;

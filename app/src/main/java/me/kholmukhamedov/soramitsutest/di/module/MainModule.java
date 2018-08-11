@@ -15,7 +15,7 @@ import me.kholmukhamedov.soramitsutest.models.converter.DomainToPresentationConv
 import me.kholmukhamedov.soramitsutest.models.data.FeedBean;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
+import me.kholmukhamedov.soramitsutest.presentation.presenter.MainPresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
 import retrofit2.Retrofit;
 

@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.presentation.main.view;
+package me.kholmukhamedov.soramitsutest.presentation.view;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
