@@ -1,11 +1,18 @@
 package me.kholmukhamedov.soramitsutest.presentation.main.view;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.SearchView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -14,22 +21,27 @@ import javax.inject.Inject;
 import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.di.App;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.grid.view.GridFragment;
 import me.kholmukhamedov.soramitsutest.presentation.item.view.ItemFragment;
 import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
 
 /**
  * Main activity of the application
  */
-public final class MainActivity extends MvpAppCompatActivity implements MainView, GridFragment.Listener {
+public final class MainActivity extends MvpAppCompatActivity implements MainView {
 
+    private static final int GRID_COLUMNS = 3;
+
+    @Inject
+    Picasso mPicasso;
     @Inject
     @InjectPresenter
     MainPresenter mPresenter;
 
-    private GridFragment mGridFragment;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView mRecyclerView;
     private ItemFragment mItemFragment;
-    private boolean mItemShowed;
+    private SearchView mSearchView;
 
     /**
      * Provide presenter presented by Dagger to Moxy
@@ -42,7 +54,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     }
 
     /**
-     * Provides dependencies, sets the layout and starts fragments
+     * Inject dependencies, init and sets views, adapter, listeners and item fragment
      *
      * @param savedInstanceState bundle of data that has been saved while changing configuration
      */
@@ -52,17 +64,63 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        reloadOrInitGridFragment();
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mRecyclerView = findViewById(R.id.recycler_view);
+
+        mAdapter = new MainAdapter(mPicasso, this::onItemClick);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this::onPullToRefresh);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, GRID_COLUMNS));
+        mRecyclerView.setAdapter(mAdapter);
+
         initItemFragment();
     }
 
     /**
-     * If fullscreen item showed then hides, otherwise closes activity
+     * Sets search option and listeners on it
+     *
+     * @param menu {@inheritDoc}
+     * @return always {@code true}
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        mSearchView = new SearchView(this);
+        mSearchView.setOnCloseListener(this::onSearchClose);
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mPresenter.loadItems(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    mPresenter.loadItems();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
+        MenuItem menuItem = menu.findItem(R.id.search);
+        menuItem.setActionView(mSearchView);
+
+        return true;
+    }
+
+    /**
+     * Commands to presenter to hide item fragment and manages back click
      */
     @Override
     public void onBackPressed() {
-        if (mItemShowed) {
-            mPresenter.hideItem();
+        mPresenter.hideItem();
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStackImmediate();
         } else {
             super.onBackPressed();
         }
@@ -75,7 +133,8 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
      */
     @Override
     public void onItemsLoaded(List<ItemModel> items) {
-        mGridFragment.setItems(items);
+        mSwipeRefreshLayout.setRefreshing(false);
+        ((MainAdapter) mAdapter).updateItems(items);
     }
 
     /**
@@ -83,9 +142,16 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
      */
     @Override
     public void onItemShow(ItemModel item) {
-        mItemShowed = true;
         mItemFragment.setItem(item);
-        switchFragmentsVisibility(mGridFragment, mItemFragment);
+
+        getSupportFragmentManager().popBackStackImmediate();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frame_layout, mItemFragment, ItemFragment.TAG)
+                .addToBackStack(null)
+                .commit();
+
+        mSwipeRefreshLayout.setVisibility(View.GONE);
     }
 
     /**
@@ -93,83 +159,54 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
      */
     @Override
     public void onItemHide() {
-        mItemShowed = false;
-        switchFragmentsVisibility(mItemFragment, mGridFragment);
+        mSwipeRefreshLayout.setVisibility(View.VISIBLE);
     }
 
     //endregion
 
-    //region GridFragment.Listener
+    /**
+     * Initializes item screen fragment
+     * Since {@link ItemFragment} can retain, first we try to restore it. If it can't be restored,
+     * then we create new instance
+     */
+    private void initItemFragment() {
+        ItemFragment itemFragment = (ItemFragment) getSupportFragmentManager()
+                .findFragmentByTag(ItemFragment.TAG);
+
+        if (itemFragment == null) {
+            mItemFragment = ItemFragment.newInstance();
+        } else {
+            mItemFragment = itemFragment;
+        }
+    }
 
     /**
-     * {@inheritDoc}
+     * Action for pull to refresh listener
      */
-    @Override
-    public void onPullToRefresh() {
+    private void onPullToRefresh() {
         mPresenter.loadItems();
     }
 
     /**
-     * {@inheritDoc}
+     * Action for item click listener
+     *
+     * @param v clicked view
      */
-    @Override
-    public void onItemClick(ItemModel item) {
+    private void onItemClick(View v) {
+        int position = mRecyclerView.getChildLayoutPosition(v);
+        ItemModel item = ((MainAdapter) mAdapter).getItem(position);
         mPresenter.loadItem(item);
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onSearch(String query) {
-        mPresenter.loadItems(query);
-    }
-
-    //endregion
-
-    /**
-     * Since {@link GridFragment} is retaining, first we try to reload it. If it is not available,
-     * then initialize it.
-     */
-    private void reloadOrInitGridFragment() {
-        mGridFragment = (GridFragment) getSupportFragmentManager()
-                .findFragmentByTag(GridFragment.TAG);
-
-        if (mGridFragment == null) {
-            mGridFragment = GridFragment.newInstance();
-        }
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_layout, mGridFragment, GridFragment.TAG)
-                .commit();
-    }
-
-    /**
-     * Initializing {@link ItemFragment} and hiding it
-     */
-    private void initItemFragment() {
-        mItemFragment = ItemFragment.newInstance();
-
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.frame_layout, mItemFragment, ItemFragment.TAG)
-                .hide(mItemFragment)
-                .commit();
-    }
-
-    /**
-     * Switch visibility of fragment to avoid imposition
+     * Action for search field close listener
      *
-     * @param hide fragment to hide
-     * @param show fragment to show
+     * @return always {@code true}
      */
-    private void switchFragmentsVisibility(Fragment hide, Fragment show) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .hide(hide)
-                .show(show)
-                .commit();
+    private boolean onSearchClose() {
+        mSearchView.onActionViewCollapsed();
+        mPresenter.loadItems();
+        return true;
     }
 
 }

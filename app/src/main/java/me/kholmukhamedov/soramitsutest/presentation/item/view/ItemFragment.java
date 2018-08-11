@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -30,7 +32,7 @@ public final class ItemFragment extends MvpAppCompatFragment {
     @Inject
     Picasso mPicasso;
 
-    private ImageView mImageView;
+    private ItemModel mItem;
 
     /**
      * Creates new instance
@@ -42,7 +44,7 @@ public final class ItemFragment extends MvpAppCompatFragment {
     }
 
     /**
-     * Provides dependencies
+     * Provides dependencies, enables instance retaining and options menu existing
      *
      * @param context {@inheritDoc}
      */
@@ -50,10 +52,23 @@ public final class ItemFragment extends MvpAppCompatFragment {
     public void onAttach(Context context) {
         App.getMainComponent().inject(this);
         super.onAttach(context);
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     /**
-     * Init and setup views
+     * Disables search option
+     *
+     * @param menu {@inheritDoc}
+     * @param inflater {@inheritDoc}
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+    }
+
+    /**
+     * Loads image
      *
      * @param inflater           {@inheritDoc}
      * @param container          {@inheritDoc}
@@ -66,20 +81,20 @@ public final class ItemFragment extends MvpAppCompatFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item, container, false);
 
-        mImageView = view.findViewById(R.id.image_view_fullscreen);
+        mPicasso.load(mItem.getFullscreenImageUrl())
+                .placeholder(R.drawable.ic_photo_placeholder_24dp)
+                .into((ImageView) view.findViewById(R.id.image_view_fullscreen));
 
         return view;
     }
 
     /**
-     * Set item to view
+     * Saves item to local variable
      *
      * @param item item
      */
     public void setItem(ItemModel item) {
-        mPicasso.load(item.getFullscreenImageUrl())
-                .placeholder(R.drawable.ic_photo_placeholder_24dp)
-                .into(mImageView);
+        mItem = item;
     }
 
 }

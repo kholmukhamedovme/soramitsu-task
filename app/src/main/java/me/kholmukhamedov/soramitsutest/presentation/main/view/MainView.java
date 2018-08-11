@@ -7,12 +7,15 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import java.util.List;
 
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
+import me.kholmukhamedov.soramitsutest.presentation.utils.AddToEndSingleByTagStateStrategy;
 
 /**
  * Interface for activity/fragment to implement in order to interact with presenter
  */
 @StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
+
+    String ITEM_FRAGMENT_TAG = "itemFragmentTag";
 
     /**
      * Reaction on loading list of items
@@ -26,11 +29,13 @@ public interface MainView extends MvpView {
      *
      * @param item item in presentation layer model
      */
+    @StateStrategyType(value = AddToEndSingleByTagStateStrategy.class, tag = ITEM_FRAGMENT_TAG)
     void onItemShow(ItemModel item);
 
     /**
      * Reaction to hide item event
      */
+    @StateStrategyType(value = AddToEndSingleByTagStateStrategy.class, tag = ITEM_FRAGMENT_TAG)
     void onItemHide();
 
 }
