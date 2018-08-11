@@ -1,5 +1,8 @@
 package me.kholmukhamedov.soramitsutest.presentation.view;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -39,6 +42,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     MainPresenter mPresenter;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private View mNoInternetConnectionView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView mRecyclerView;
     private ItemFragment mItemFragment;
@@ -65,6 +69,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mNoInternetConnectionView = findViewById(R.id.no_internet_connection_view);
         mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         mRecyclerView = findViewById(R.id.recycler_view);
 
@@ -75,6 +80,12 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         mRecyclerView.setAdapter(mAdapter);
 
         initItemFragment();
+
+        if (isConnectedToInternet()) {
+            mPresenter.loadItems();
+        } else {
+            shouldShowNoInternetConnection(true);
+        }
     }
 
     /**
@@ -134,6 +145,7 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
      */
     @Override
     public void onItemsLoaded(List<ItemModel> items) {
+        shouldShowNoInternetConnection(false);
         mSwipeRefreshLayout.setRefreshing(false);
         ((MainAdapter) mAdapter).updateItems(items);
     }
@@ -180,6 +192,16 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
     //endregion
 
     /**
+     * Sets visibility of view for no internet connection according to {@code should} value
+     *
+     * @param should {@code true} if should show, otherwise {@code false}
+     */
+    private void shouldShowNoInternetConnection(boolean should) {
+        mNoInternetConnectionView.setVisibility(should ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(should ? View.GONE : View.VISIBLE);
+    }
+
+    /**
      * Initializes item screen fragment
      * Since {@link ItemFragment} can retain, first we try to restore it. If it can't be restored,
      * then we create new instance
@@ -222,6 +244,19 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
         mSearchView.onActionViewCollapsed();
         mPresenter.loadItems();
         return true;
+    }
+
+    /**
+     * Checks whether connected to internet or not
+     *
+     * @return {@code true} if connected, otherwise {@code false}
+     */
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager != null ? connectivityManager.getActiveNetworkInfo() : null;
+
+        return networkInfo != null && networkInfo.isConnectedOrConnecting();
     }
 
 }

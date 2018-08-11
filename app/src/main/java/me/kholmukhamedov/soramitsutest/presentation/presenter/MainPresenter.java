@@ -48,15 +48,6 @@ public final class MainPresenter extends BasePresenter<MainView> {
     }
 
     /**
-     * Starts request to load feed items
-     */
-    @Override
-    protected void onFirstViewAttach() {
-        super.onFirstViewAttach();
-        loadItems();
-    }
-
-    /**
      * Request to load feed items
      */
     public void loadItems() {
