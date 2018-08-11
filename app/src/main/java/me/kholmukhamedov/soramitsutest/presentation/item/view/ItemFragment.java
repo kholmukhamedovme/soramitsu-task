@@ -15,7 +15,7 @@ import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BaseFragment;
 
-public class ItemFragment extends BaseFragment {
+public final class ItemFragment extends BaseFragment {
 
     /**
      * Tag for fragment manager

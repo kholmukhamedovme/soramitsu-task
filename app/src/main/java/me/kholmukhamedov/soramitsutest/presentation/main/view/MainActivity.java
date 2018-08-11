@@ -20,7 +20,7 @@ import me.kholmukhamedov.soramitsutest.presentation.utils.BaseActivity;
 /**
  * Main activity of the application
  */
-public class MainActivity extends BaseActivity implements MainView, GridFragment.Listener {
+public final class MainActivity extends BaseActivity implements MainView, GridFragment.Listener {
 
     @Inject
     @InjectPresenter

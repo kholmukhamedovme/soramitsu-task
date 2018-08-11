@@ -23,9 +23,9 @@ public final class MainPresenter extends BasePresenter<MainView> {
 
     private static final String TAG = "MainPresenter";
 
-    private Interactor mInteractor;
-    private AbstractConverter<Item, ItemModel> mConverter;
-    private RxSchedulerProvider mRxSchedulerProvider;
+    private final Interactor mInteractor;
+    private final AbstractConverter<Item, ItemModel> mConverter;
+    private final RxSchedulerProvider mRxSchedulerProvider;
 
     /**
      * Inject dependencies and initializes converter

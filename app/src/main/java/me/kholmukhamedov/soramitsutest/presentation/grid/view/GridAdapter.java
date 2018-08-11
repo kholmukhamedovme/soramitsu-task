@@ -18,7 +18,7 @@ import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import static android.view.View.OnClickListener;
 import static dagger.internal.Preconditions.checkNotNull;
 
-public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
+public final class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
 
     private final Picasso mPicasso;
     private final List<ItemModel> mItems;
