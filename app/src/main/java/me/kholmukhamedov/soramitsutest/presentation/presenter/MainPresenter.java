@@ -1,10 +1,14 @@
 package me.kholmukhamedov.soramitsutest.presentation.presenter;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
+import android.support.annotation.StringRes;
 
 import com.arellomobile.mvp.InjectViewState;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+
+import me.kholmukhamedov.soramitsutest.R;
 import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
@@ -12,6 +16,7 @@ import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BasePresenter;
 import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
 import me.kholmukhamedov.soramitsutest.presentation.view.MainView;
+import retrofit2.HttpException;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
@@ -61,7 +66,7 @@ public final class MainPresenter extends BasePresenter<MainView> {
                         .map(mConverter::convertList)
                         .subscribe(
                                 items -> getViewState().onItemsLoaded(items),
-                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable) // TODO handle gently
+                                this::handleError
                         )
         );
     }
@@ -78,7 +83,7 @@ public final class MainPresenter extends BasePresenter<MainView> {
                         .map(mConverter::convertList)
                         .subscribe(
                                 items -> getViewState().onItemsLoaded(items),
-                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable) // TODO handle gently
+                                this::handleError
                         )
         );
     }
@@ -97,6 +102,28 @@ public final class MainPresenter extends BasePresenter<MainView> {
      */
     public void hideItem() {
         getViewState().onItemHide();
+    }
+
+    /**
+     * Handles error according to type
+     *
+     * @param throwable error
+     */
+    private void handleError(Throwable throwable) {
+        @StringRes
+        int messageResource;
+
+        if (throwable instanceof HttpException) {
+            messageResource = R.string.error_http_response_code;
+        } else if (throwable instanceof SocketTimeoutException) {
+            messageResource = R.string.error_timeout;
+        } else if (throwable instanceof IOException) {
+            messageResource = R.string.error_io_parse;
+        } else {
+            messageResource = R.string.error_unknown;
+        }
+
+        getViewState().showError(messageResource);
     }
 
 }

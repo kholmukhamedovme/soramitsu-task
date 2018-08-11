@@ -1,7 +1,9 @@
 package me.kholmukhamedov.soramitsutest.presentation.view;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -151,6 +153,20 @@ public final class MainActivity extends MvpAppCompatActivity implements MainView
                 .commit();
 
         mSwipeRefreshLayout.setVisibility(View.GONE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void showError(@StringRes int message) {
+        mSwipeRefreshLayout.setRefreshing(false);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.error_title)
+                .setMessage(message)
+                .create()
+                .show();
     }
 
     /**

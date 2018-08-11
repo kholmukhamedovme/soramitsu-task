@@ -1,7 +1,10 @@
 package me.kholmukhamedov.soramitsutest.presentation.view;
 
+import android.support.annotation.StringRes;
+
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 
 import java.util.List;
@@ -12,7 +15,6 @@ import me.kholmukhamedov.soramitsutest.presentation.utils.AddToEndSingleByTagSta
 /**
  * Interface for activity/fragment to implement in order to interact with presenter
  */
-@StateStrategyType(AddToEndSingleStrategy.class)
 public interface MainView extends MvpView {
 
     String ITEM_FRAGMENT_TAG = "itemFragmentTag";
@@ -22,6 +24,7 @@ public interface MainView extends MvpView {
      *
      * @param items list of items in presentation layer models
      */
+    @StateStrategyType(AddToEndSingleStrategy.class)
     void onItemsLoaded(List<ItemModel> items);
 
     /**
@@ -37,5 +40,13 @@ public interface MainView extends MvpView {
      */
     @StateStrategyType(value = AddToEndSingleByTagStateStrategy.class, tag = ITEM_FRAGMENT_TAG)
     void onItemHide();
+
+    /**
+     * Reaction to error event
+     *
+     * @param message error message
+     */
+    @StateStrategyType(SkipStrategy.class)
+    void showError(@StringRes int message);
 
 }

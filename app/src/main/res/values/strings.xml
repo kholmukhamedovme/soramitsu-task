@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Soramitsu Test</string>
     <string name="search_placeholder">Search by tag</string>
+    <string name="error_title">Error</string>
+    <string name="error_http_response_code">Server didn\'t return 200 OK</string>
+    <string name="error_timeout">Poor internet connection, please try again</string>
+    <string name="error_io_parse">Network error or unable to parse server response</string>
+    <string name="error_unknown">Occurred unknown error</string>
 </resources>
