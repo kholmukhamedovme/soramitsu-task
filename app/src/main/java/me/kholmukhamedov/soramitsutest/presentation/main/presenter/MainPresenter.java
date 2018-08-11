@@ -5,15 +5,13 @@ import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
-import me.kholmukhamedov.soramitsutest.models.converter.DomainToPresentationConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.main.view.MainView;
 import me.kholmukhamedov.soramitsutest.presentation.utils.BasePresenter;
+import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
 
 import static dagger.internal.Preconditions.checkNotNull;
 
@@ -21,21 +19,27 @@ import static dagger.internal.Preconditions.checkNotNull;
  * Presenter for {@link me.kholmukhamedov.soramitsutest.presentation.main.view.MainActivity}
  */
 @InjectViewState
-public class MainPresenter extends BasePresenter<MainView> {
+public final class MainPresenter extends BasePresenter<MainView> {
 
     private static final String TAG = "MainPresenter";
 
     private Interactor mInteractor;
     private AbstractConverter<Item, ItemModel> mConverter;
+    private RxSchedulerProvider mRxSchedulerProvider;
 
     /**
      * Inject dependencies and initializes converter
      *
-     * @param interactor interactor for fetching content from Flickr
+     * @param interactor          interactor for fetching content from Flickr
+     * @param converter           converter from domain layer entity to presentation layer model
+     * @param rxSchedulerProvider RxJava scheduler provider
      */
-    public MainPresenter(@NonNull Interactor interactor) {
+    public MainPresenter(@NonNull Interactor interactor,
+                         @NonNull AbstractConverter<Item, ItemModel> converter,
+                         @NonNull RxSchedulerProvider rxSchedulerProvider) {
         mInteractor = checkNotNull(interactor, "Interactor is required");
-        mConverter = new DomainToPresentationConverter();
+        mConverter = checkNotNull(converter, "AbstractConverter<Item, ItemModel> is required");
+        mRxSchedulerProvider = checkNotNull(rxSchedulerProvider, "RxSchedulerProvider is required");
     }
 
     /**
@@ -53,12 +57,11 @@ public class MainPresenter extends BasePresenter<MainView> {
     public void loadItems() {
         getCompositeDisposable().add(
                 mInteractor.requestItems()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .compose(mRxSchedulerProvider.getSingleFromIOToMainThread())
                         .map(mConverter::convertList)
                         .subscribe(
                                 items -> getViewState().onItemsLoaded(items),
-                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable)
+                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable) // TODO handle gently
                         )
         );
     }
@@ -71,12 +74,11 @@ public class MainPresenter extends BasePresenter<MainView> {
     public void loadItems(String tag) {
         getCompositeDisposable().add(
                 mInteractor.requestItems(tag)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .compose(mRxSchedulerProvider.getSingleFromIOToMainThread())
                         .map(mConverter::convertList)
                         .subscribe(
                                 items -> getViewState().onItemsLoaded(items),
-                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable)
+                                throwable -> Log.e(TAG, throwable.getLocalizedMessage(), throwable) // TODO handle gently
                         )
         );
     }

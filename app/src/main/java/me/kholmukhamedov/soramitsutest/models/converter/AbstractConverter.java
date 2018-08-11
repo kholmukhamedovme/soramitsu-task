@@ -1,8 +1,12 @@
 package me.kholmukhamedov.soramitsutest.models.converter;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static dagger.internal.Preconditions.checkNotNull;
 
 /**
  * Abstract class for converting entities between layers
@@ -18,7 +22,8 @@ public abstract class AbstractConverter<From, To> {
      * @param from from entity
      * @return to entity
      */
-    public abstract To convert(From from);
+    @NonNull
+    public abstract To convert(@NonNull From from);
 
     /**
      * Convert list
@@ -26,8 +31,11 @@ public abstract class AbstractConverter<From, To> {
      * @param fromList list of from entities
      * @return list of to entities
      */
-    public List<To> convertList(List<From> fromList) {
-        if (fromList == null || fromList.isEmpty()) {
+    @NonNull
+    public List<To> convertList(@NonNull List<From> fromList) {
+        checkNotNull(fromList, "List must be non-null");
+
+        if (fromList.isEmpty()) {
             return Collections.emptyList();
         }
 

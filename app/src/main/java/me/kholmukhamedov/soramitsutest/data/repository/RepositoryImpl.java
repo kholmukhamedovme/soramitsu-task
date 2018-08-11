@@ -8,7 +8,6 @@ import io.reactivex.Single;
 import me.kholmukhamedov.soramitsutest.data.remote.ApiService;
 import me.kholmukhamedov.soramitsutest.domain.Repository;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
-import me.kholmukhamedov.soramitsutest.models.converter.DataToDomainConverter;
 import me.kholmukhamedov.soramitsutest.models.data.FeedBean;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 
@@ -26,10 +25,12 @@ public final class RepositoryImpl implements Repository {
      * Injects dependencies and initializes converter
      *
      * @param apiService HTTP API for Flickr service
+     * @param converter  converter from data layer bean to domain layer entity
      */
-    public RepositoryImpl(@NonNull ApiService apiService) {
+    public RepositoryImpl(@NonNull ApiService apiService,
+                          @NonNull AbstractConverter<FeedBean.Item, Item> converter) {
         mApiService = checkNotNull(apiService, "ApiService is required");
-        mConverter = new DataToDomainConverter();
+        mConverter = checkNotNull(converter, "AbstractConverter<FeedBean.Item, Item> is required");
     }
 
     /**
