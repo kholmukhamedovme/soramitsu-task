@@ -1,4 +1,4 @@
-package me.kholmukhamedov.soramitsutest.di;
+package me.kholmukhamedov.soramitsutest.di.module;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,12 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.squareup.picasso.Picasso;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import me.kholmukhamedov.soramitsutest.data.remote.ApiService;
 import me.kholmukhamedov.soramitsutest.data.repository.RepositoryImpl;
+import me.kholmukhamedov.soramitsutest.di.scope.MainScope;
 import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.domain.Repository;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
@@ -29,13 +28,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 @Module
-public final class AppModule {
+public class MainModule {
 
-    @Provides
-    Context provideApplicationContext(App application) {
-        return application.getApplicationContext();
-    }
-
+    @MainScope
     @Provides
     Retrofit provideRetrofit() {
         return new Retrofit.Builder()
@@ -46,46 +41,53 @@ public final class AppModule {
                 .build();
     }
 
+    @MainScope
     @Provides
     Picasso providePicasso(@NonNull Context context) {
         return Picasso.with(context);
     }
 
+    @MainScope
     @Provides
     RxSchedulerProvider provideRxSchedulerProvider() {
         return new RxSchedulerProviderImpl();
     }
 
     //region Converters
+    @MainScope
     @Provides
     AbstractConverter<FeedBean.Item, Item> provideDataToDomainConverter() {
         return new DataToDomainConverter();
     }
 
+    @MainScope
     @Provides
     AbstractConverter<Item, ItemModel> provideDomainToDataConverter() {
         return new DomainToPresentationConverter();
     }
     //endregion
 
+    @MainScope
     @Provides
     ApiService provideApiService(@NonNull Retrofit retrofit) {
         return retrofit.create(ApiService.class);
     }
 
+    @MainScope
     @Provides
     Repository provideRepository(@NonNull ApiService apiService,
                                  @NonNull AbstractConverter<FeedBean.Item, Item> converter) {
         return new RepositoryImpl(apiService, converter);
     }
 
+    @MainScope
     @Provides
     Interactor provideInteractor(@NonNull Repository repository) {
         return new Interactor(repository);
     }
 
+    @MainScope
     @Provides
-    @Singleton
     MainPresenter provideMainPresenter(@NonNull Interactor interactor,
                                        @NonNull AbstractConverter<Item, ItemModel> converter,
                                        @NonNull RxSchedulerProvider rxSchedulerProvider) {

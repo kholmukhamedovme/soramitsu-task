@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,10 +22,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import me.kholmukhamedov.soramitsutest.R;
+import me.kholmukhamedov.soramitsutest.di.App;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.utils.BaseFragment;
 
-public final class GridFragment extends BaseFragment {
+public final class GridFragment extends MvpAppCompatFragment {
 
     /**
      * Tag for fragment manager
@@ -51,6 +52,24 @@ public final class GridFragment extends BaseFragment {
      */
     public static GridFragment newInstance() {
         return new GridFragment();
+    }
+
+    /**
+     * Provides dependencies, saves link to activity for further interactions
+     *
+     * @param context context of activity
+     */
+    @Override
+    public void onAttach(Context context) {
+        App.getMainComponent().inject(this);
+        super.onAttach(context);
+
+        if (context instanceof Listener) {
+            mListener = (Listener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement Listener");
+        }
     }
 
     /**
@@ -130,23 +149,6 @@ public final class GridFragment extends BaseFragment {
         mRecyclerView.setAdapter(mAdapter);
 
         return view;
-    }
-
-    /**
-     * Saves link to activity for further interactions
-     *
-     * @param context context of activity
-     */
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof Listener) {
-            mListener = (Listener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement Listener");
-        }
     }
 
     /**

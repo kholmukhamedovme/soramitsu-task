@@ -3,6 +3,7 @@ package me.kholmukhamedov.soramitsutest.presentation.main.view;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
@@ -11,16 +12,16 @@ import java.util.List;
 import javax.inject.Inject;
 
 import me.kholmukhamedov.soramitsutest.R;
+import me.kholmukhamedov.soramitsutest.di.App;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
 import me.kholmukhamedov.soramitsutest.presentation.grid.view.GridFragment;
 import me.kholmukhamedov.soramitsutest.presentation.item.view.ItemFragment;
 import me.kholmukhamedov.soramitsutest.presentation.main.presenter.MainPresenter;
-import me.kholmukhamedov.soramitsutest.presentation.utils.BaseActivity;
 
 /**
  * Main activity of the application
  */
-public final class MainActivity extends BaseActivity implements MainView, GridFragment.Listener {
+public final class MainActivity extends MvpAppCompatActivity implements MainView, GridFragment.Listener {
 
     @Inject
     @InjectPresenter
@@ -41,12 +42,13 @@ public final class MainActivity extends BaseActivity implements MainView, GridFr
     }
 
     /**
-     * Sets the layout and starts fragments
+     * Provides dependencies, sets the layout and starts fragments
      *
      * @param savedInstanceState bundle of data that has been saved while changing configuration
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        App.getMainComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

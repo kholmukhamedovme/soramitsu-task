@@ -55,10 +55,7 @@ dependencies {
 
     // Dagger
     implementation "com.google.dagger:dagger:$DAGGER_VERSION"
-    implementation "com.google.dagger:dagger-android:$DAGGER_VERSION"
-    implementation "com.google.dagger:dagger-android-support:$DAGGER_VERSION"
     annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
-    annotationProcessor "com.google.dagger:dagger-android-processor:$DAGGER_VERSION"
 
     // Moxy
     implementation "com.arello-mobile:moxy:$MOXY_VERSION"
