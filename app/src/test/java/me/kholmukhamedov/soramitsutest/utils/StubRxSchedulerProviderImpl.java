@@ -1,7 +1,8 @@
-package me.kholmukhamedov.soramitsutest.presentation.utils;
+package me.kholmukhamedov.soramitsutest.utils;
 
 import io.reactivex.SingleTransformer;
 import io.reactivex.schedulers.TestScheduler;
+import me.kholmukhamedov.soramitsutest.presentation.utils.RxSchedulerProvider;
 
 /**
  * Stub implementation of {@link RxSchedulerProvider}

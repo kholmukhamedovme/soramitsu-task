@@ -20,8 +20,8 @@ import me.kholmukhamedov.soramitsutest.domain.Interactor;
 import me.kholmukhamedov.soramitsutest.models.converter.AbstractConverter;
 import me.kholmukhamedov.soramitsutest.models.domain.Item;
 import me.kholmukhamedov.soramitsutest.models.presentation.ItemModel;
-import me.kholmukhamedov.soramitsutest.presentation.utils.StubRxSchedulerProviderImpl;
 import me.kholmukhamedov.soramitsutest.presentation.view.MainView$$State;
+import me.kholmukhamedov.soramitsutest.utils.StubRxSchedulerProviderImpl;
 import retrofit2.HttpException;
 
 import static org.mockito.ArgumentMatchers.anyList;
